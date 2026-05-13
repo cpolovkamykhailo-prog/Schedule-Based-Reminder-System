@@ -2,23 +2,29 @@ name: Package Application
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
   create-installers:
     name: Generate ${{ matrix.installer_type }}
     runs-on: ${{ matrix.os }}
+
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: windows-latest
-            installer_type: MSI
+            installer_type: msi
+
           - os: macos-latest
-            installer_type: DMG
+            installer_type: dmg
+
           - os: ubuntu-latest
-            installer_type: DEB
+            installer_type: deb
 
     steps:
       - name: Fetch Sources
@@ -27,7 +33,7 @@ jobs:
       - name: Setup Java JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '25'
           distribution: 'temurin'
           cache: 'maven'
 
@@ -36,7 +42,9 @@ jobs:
 
       - name: Prepare Linux Deps
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y fakeroot binutils rpm
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fakeroot binutils rpm
 
       - name: Run jpackage
         run: mvn panteleyev:jpackage -Dtype=${{ matrix.installer_type }}

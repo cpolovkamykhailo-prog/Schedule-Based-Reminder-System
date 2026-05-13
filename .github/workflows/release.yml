@@ -45,7 +45,8 @@ jobs:
           sudo apt-get install -y fakeroot dpkg-dev
 
       - name: Build Fat JAR
-        run: mvn clean package -DskipTests -Dspotless.check.skip=true
+        shell: bash
+        run: mvn clean package -DskipTests=true -Dspotless.check.skip=true
 
       - name: Extract version from tag
         id: version

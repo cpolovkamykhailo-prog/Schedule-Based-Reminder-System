@@ -1,23 +1,48 @@
-name: Minimal Build Test
+name: Package Application
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  test-build:
-    runs-on: ubuntu-latest
+  create-installers:
+    name: Generate ${{ matrix.installer_type }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            installer_type: MSI
+          - os: macos-latest
+            installer_type: DMG
+          - os: ubuntu-latest
+            installer_type: DEB
+
     steps:
-      - name: Checkout
+      - name: Fetch Sources
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Setup Java JDK
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'maven'
 
-      - name: Compile Only
-        run: mvn compile -Dspotless.check.skip
+      - name: Build Executable JAR
+        run: mvn clean package -DskipTests -Dspotless.check.skip
+
+      - name: Prepare Linux Deps
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y fakeroot binutils rpm
+
+      - name: Run jpackage
+        run: mvn panteleyev:jpackage -Dtype=${{ matrix.installer_type }}
+
+      - name: Archive Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.installer_type }}-Package
+          path: target/dist/*

@@ -187,7 +187,9 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>shaded</shadedClassifierName>
+                            <outputDirectory>${project.build.directory}/shaded</outputDirectory>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.antigravity.reminder.Launcher</mainClass>
@@ -208,8 +210,8 @@
                     <appVersion>${project.version}</appVersion>
                     <vendor>Antigravity</vendor>
                     <destination>target/dist</destination>
-                    <input>target/libs</input>
-                    <mainJar>${project.artifactId}-${project.version}.jar</mainJar>
+                    <input>target/shaded</input>
+                    <mainJar>${project.artifactId}-${project.version}-shaded.jar</mainJar>
                     <mainClass>com.antigravity.reminder.Launcher</mainClass>
                     <javaOptions>
                         <option>-Dfile.encoding=UTF-8</option>

@@ -1,0 +1,127 @@
+name: Release — Build Installers
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-installers:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Install WiX Toolset (Windows only)
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          choco install wixtoolset --yes
+
+          $wixPath = "${env:ProgramFiles(x86)}\WiX Toolset v3.14\bin"
+          echo $wixPath >> $env:GITHUB_PATH
+
+      - name: Install Linux packaging tools
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fakeroot dpkg-dev
+
+      - name: Build Fat JAR
+        run: mvn clean package -DskipTests -Dspotless.check.skip
+
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Package installer (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          jpackage `
+            --type msi `
+            --name "Reminder System" `
+            --app-version "${{ steps.version.outputs.VERSION }}" `
+            --vendor "polovka" `
+            --input target/installer-input `
+            --main-jar app.jar `
+            --main-class com.antigravity.reminder.Launcher `
+            --dest dist `
+            --win-dir-chooser `
+            --win-menu `
+            --win-shortcut
+
+      - name: Package installer (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          jpackage \
+            --type dmg \
+            --name "Reminder System" \
+            --app-version "${{ steps.version.outputs.VERSION }}" \
+            --vendor "polovka" \
+            --input target/installer-input \
+            --main-jar app.jar \
+            --main-class com.antigravity.reminder.Launcher \
+            --dest dist
+
+      - name: Package installer (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          jpackage \
+            --type deb \
+            --name "reminder-system" \
+            --app-version "${{ steps.version.outputs.VERSION }}" \
+            --vendor "polovka" \
+            --input target/installer-input \
+            --main-jar app.jar \
+            --main-class com.antigravity.reminder.Launcher \
+            --dest dist \
+            --linux-shortcut
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-${{ matrix.os }}
+          path: dist/*
+          retention-days: 1
+
+  publish-release:
+    needs: build-installers
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all installer artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: installers
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Reminder System ${{ github.ref_name }}"
+          generate_release_notes: true
+          files: installers/**
+          draft: false
+          prerelease: false

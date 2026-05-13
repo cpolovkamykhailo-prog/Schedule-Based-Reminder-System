@@ -210,13 +210,16 @@
                     <input>target/</input>
                     <mainJar>${project.artifactId}-${project.version}.jar</mainJar>
                     <mainClass>com.antigravity.reminder.Launcher</mainClass>
-                    <type>EXE</type>
-                    <winShortcut>true</winShortcut>
-                    <winMenu>true</winMenu>
-                    <winMenuGroup>Reminder System</winMenuGroup>
                     <javaOptions>
                         <option>-Dfile.encoding=UTF-8</option>
                     </javaOptions>
+                    <!-- Windows -->
+                    <winShortcut>true</winShortcut>
+                    <winMenu>true</winMenu>
+                    <winMenuGroup>Reminder System</winMenuGroup>
+                    <!-- Linux -->
+                    <linuxShortcut>true</linuxShortcut>
+                    <linuxAppCategory>Utility</linuxAppCategory>
                 </configuration>
             </plugin>
 

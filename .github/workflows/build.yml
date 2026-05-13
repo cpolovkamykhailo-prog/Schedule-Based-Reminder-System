@@ -1,4 +1,4 @@
-name: Build Installers
+name: Build JAR and List Files
 
 on:
   push:
@@ -6,26 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build:
-    name: Build for ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
-        include:
-          - os: windows-latest
-            type: MSI
-          - os: macos-latest
-            type: DMG
-          - os: ubuntu-latest
-            type: DEB
-
+    name: Build JAR
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -37,20 +21,18 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Install Dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y fakeroot binutils rpm
-
-      - name: Build and Package
+      - name: Build JAR with Maven
         run: mvn clean package -DskipTests -Dspotless.check.skip
 
-      - name: Create Installer
-        run: mvn panteleyev:jpackage -Dtype=${{ matrix.type }}
+      - name: Check generated files
+        run: |
+          echo "Listing target directory:"
+          ls -R target
+          echo "Listing installer-input directory:"
+          ls -R target/installer-input || echo "Directory not found"
 
-      - name: Upload Artifact
+      - name: Upload JAR Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: installer-${{ matrix.os }}
-          path: target/dist/*
+          name: application-jar
+          path: target/installer-input/app.jar

@@ -187,9 +187,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>shaded</shadedClassifierName>
-                            <outputDirectory>${project.build.directory}/shaded</outputDirectory>
+                            <outputFile>${project.build.directory}/installer-input/app.jar</outputFile>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.antigravity.reminder.Launcher</mainClass>
@@ -200,7 +198,7 @@
                 </executions>
             </plugin>
 
-            <!-- jpackage-maven-plugin: Create native installers (EXE, MSI, DMG, DEB, etc.) -->
+            <!-- jpackage-maven-plugin -->
             <plugin>
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
@@ -210,19 +208,14 @@
                     <appVersion>${project.version}</appVersion>
                     <vendor>Antigravity</vendor>
                     <destination>target/dist</destination>
-                    <input>target/shaded</input>
-                    <mainJar>${project.artifactId}-${project.version}-shaded.jar</mainJar>
+                    <input>target/installer-input</input>
+                    <mainJar>app.jar</mainJar>
                     <mainClass>com.antigravity.reminder.Launcher</mainClass>
-                    <javaOptions>
-                        <option>-Dfile.encoding=UTF-8</option>
-                    </javaOptions>
                     <!-- Windows -->
                     <winShortcut>true</winShortcut>
                     <winMenu>true</winMenu>
-                    <winMenuGroup>Reminder System</winMenuGroup>
                     <!-- Linux -->
                     <linuxShortcut>true</linuxShortcut>
-                    <linuxAppCategory>Utility</linuxAppCategory>
                 </configuration>
             </plugin>
 

@@ -10,6 +10,8 @@ jobs:
   build:
     name: Build for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     strategy:
       fail-fast: false
       matrix:
@@ -36,10 +38,13 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y fakeroot binutils
+          sudo apt-get install -y fakeroot binutils rpm
 
       - name: Build with Maven
         run: mvn clean package -DskipTests -Dspotless.check.skip
+
+      - name: Verify Installer Input
+        run: ls -R target/installer-input
 
       - name: Create Installer with jpackage
         run: mvn panteleyev:jpackage -Dtype=${{ matrix.type }}

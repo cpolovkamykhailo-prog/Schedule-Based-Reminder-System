@@ -211,11 +211,14 @@
                     <input>target/installer-input</input>
                     <mainJar>app.jar</mainJar>
                     <mainClass>com.antigravity.reminder.Launcher</mainClass>
+                    <verbose>true</verbose>
                     <!-- Windows -->
                     <winShortcut>true</winShortcut>
                     <winMenu>true</winMenu>
+                    <winDirChooser>true</winDirChooser>
                     <!-- Linux -->
                     <linuxShortcut>true</linuxShortcut>
+                    <linuxDebMaintainer>cpolovkamykhailo@gmail.com</linuxDebMaintainer>
                 </configuration>
             </plugin>
 

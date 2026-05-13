@@ -27,7 +27,7 @@ public class CustomConnectionPool {
             throw new RuntimeException("Error loading db.properties", e);
         }
 
-        String url = props.getProperty("db.url");
+        String url = DbConfig.resolveUrl(props.getProperty("db.url"));
         String user = props.getProperty("db.user");
         String pass = props.getProperty("db.password");
         String driver = props.getProperty("db.driver", "org.postgresql.Driver");

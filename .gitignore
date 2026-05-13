@@ -20,7 +20,7 @@ buildNumber.properties
 .vscode/
 
 # Databases
-db/
+/db/
 
 # Lombok
 .lombok.config

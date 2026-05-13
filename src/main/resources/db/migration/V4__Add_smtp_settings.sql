@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN smtp_password VARCHAR(255);

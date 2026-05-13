@@ -1,0 +1,110 @@
+.root {
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-background-color: #f8fafc;
+}
+
+.button {
+    -fx-background-radius: 8;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.button-primary {
+    -fx-background-color: linear-gradient(to bottom right, #6366f1, #4f46e5);
+    -fx-text-fill: white;
+}
+
+.button-primary:hover {
+    -fx-background-color: linear-gradient(to bottom right, #4f46e5, #4338ca);
+}
+
+.button-secondary {
+    -fx-background-color: white;
+    -fx-text-fill: #475569;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+.button-danger {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+}
+
+.button-danger:hover {
+    -fx-background-color: #dc2626;
+}
+
+.text-field, .password-field, .text-area {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #e2e8f0;
+    -fx-background-color: white;
+    -fx-padding: 10;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #6366f1;
+    -fx-border-width: 2;
+}
+
+.label {
+    -fx-text-fill: #1e293b;
+}
+
+.title-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+    -fx-padding: 30;
+}
+
+.menu-button {
+    -fx-font-size: 16px;
+    -fx-pref-width: 250;
+    -fx-pref-height: 60;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 20;
+}
+
+/* Section Specific Styles */
+.reminders-view { -fx-background-color: #f0f4ff; }
+.schedules-view { -fx-background-color: #f0fdf4; }
+.tags-view { -fx-background-color: #fffbeb; }
+.history-view { -fx-background-color: #f8fafc; }
+.profile-view { -fx-background-color: #faf5ff; }
+
+.reminders-title { -fx-text-fill: #4338ca; }
+.schedules-title { -fx-text-fill: #15803d; }
+.tags-title { -fx-text-fill: #b45309; }
+.profile-title { -fx-text-fill: #7e22ce; }
+
+/* Dashboard Buttons variants */
+.reminders-btn { -fx-border-color: #6366f1; -fx-text-fill: #4338ca; }
+.schedules-btn { -fx-border-color: #22c55e; -fx-text-fill: #15803d; }
+.tags-btn { -fx-border-color: #f59e0b; -fx-text-fill: #b45309; }
+.history-btn { -fx-border-color: #64748b; -fx-text-fill: #475569; }
+.profile-btn { -fx-border-color: #a855f7; -fx-text-fill: #7e22ce; }
+
+.table-view .column-header {
+    -fx-background-color: #f1f5f9;
+    -fx-padding: 10;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: #f8fafc;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #e2e8f0;
+}
